@@ -1,13 +1,20 @@
 class Oystercard
-
-  attr_reader :get_balance
+  MAXIMUM_LIMIT = 90
+  attr_reader :balance
 
   def initialize
-    @get_balance = 0
+    @balance = 0
   end
 
   def top_up(amount)
-    @get_balance += amount
+    fail maxium_limit_error if (amount + balance) > MAXIMUM_LIMIT
+    @balance += amount
+  end
+
+  private
+
+  def maxium_limit_error
+    "Unable to top up, £#{MAXIMUM_LIMIT} is the maximum card limit"
   end
 
 end
