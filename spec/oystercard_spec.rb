@@ -38,6 +38,10 @@ describe Oystercard do
 
   describe '#in_journey?' do
 
+    it 'is initially not in a journey' do
+      expect(subject.in_journey?).to eq(false)
+    end
+
     it 'reports if a card is in journey' do
       subject.touch_in
       expect(subject).to be_in_journey
