@@ -7,7 +7,7 @@ attr_reader :entry_station
 
   def initialize
     @balance = 0
-    @in_journey = false
+    @entry_station = nil
   end
 
   def top_up(amount)
@@ -17,17 +17,15 @@ attr_reader :entry_station
 
   def touch_in(entry_station)
     fail "Please top up your oystercard" if @balance < MINIMUM_FARE
-    @in_journey = true
     @entry_station = entry_station
   end
 
   def in_journey?
-    @in_journey
+    !!entry_station
   end
 
   def touch_out
     deduct(MINIMUM_FARE)
-    @in_journey = false
     @entry_station = nil
   end
 
