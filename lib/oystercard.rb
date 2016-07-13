@@ -7,7 +7,7 @@ attr_reader :balance, :entry_station, :exit_station, :history
   def initialize
     @balance = 0
     @entry_station = nil
-    @history = {}
+    @history = []
   end
 
   def top_up(amount)
@@ -28,7 +28,7 @@ attr_reader :balance, :entry_station, :exit_station, :history
   def touch_out(exit_station)
     deduct(MINIMUM_FARE)
     @exit_station = exit_station
-    @history[entry_station] = exit_station
+    @history << {entry_station => exit_station}
     @entry_station = nil
     @exit_station = nil
   end

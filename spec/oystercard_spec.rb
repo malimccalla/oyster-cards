@@ -84,14 +84,14 @@ describe Oystercard do
     it 'stores previous entry station history' do
       full_card.touch_in(entry_station)
       full_card.touch_out(exit_station)
-      expect(full_card.history).to eq(journey)
+      expect(full_card.history).to eq([journey])
     end
     it 'can store multiple journeys' do
       full_card.touch_in(entry_station)
       full_card.touch_out(exit_station)
       full_card.touch_in("archway")
       full_card.touch_out("brixton")
-      expect(full_card.history).to eq({entry_station => exit_station, "archway" => "brixton"})
+      expect(full_card.history).to eq([{entry_station => exit_station}, {"archway" => "brixton"}])
     end
   end
 
