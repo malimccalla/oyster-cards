@@ -79,19 +79,19 @@ describe Oystercard do
 
   describe 'journey_history' do
     it 'should default as empty' do
-      expect(subject.history).to be_empty
+      expect(subject.journeys).to be_empty
     end
     it 'stores previous entry station history' do
       full_card.touch_in(entry_station)
       full_card.touch_out(exit_station)
-      expect(full_card.history).to eq([journey])
+      expect(full_card.journeys).to eq([{entry_station: entry_station, exit_station: exit_station}])
     end
     it 'can store multiple journeys' do
       full_card.touch_in(entry_station)
       full_card.touch_out(exit_station)
       full_card.touch_in("archway")
       full_card.touch_out("brixton")
-      expect(full_card.history).to eq([{entry_station => exit_station}, {"archway" => "brixton"}])
+      expect(full_card.journeys).to eq([{entry_station: entry_station, exit_station: exit_station}, {entry_station: "archway", exit_station: "brixton"}])
     end
   end
 
