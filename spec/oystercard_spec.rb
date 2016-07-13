@@ -5,7 +5,9 @@ describe Oystercard do
   let(:minimum_fare) { Oystercard::MINIMUM_FARE }
   let(:maximum_balance) { Oystercard::MAXIMUM_BALANCE }
   let(:entry_station) { double(:entry_station) }
+  let(:exit_station) { double(:exit_station) }
   let(:full_card) { described_class.new}
+  let(:journey) {{entry_station => exit_station}}
   before(:example) { full_card.top_up(maximum_balance) }
 
   describe 'initialize' do
@@ -44,16 +46,16 @@ describe Oystercard do
   describe 'touch_out' do
     it 'forgets entry station' do
       full_card.touch_in(entry_station)
-      expect{full_card.touch_out}.to change{full_card.entry_station}.to be(nil)
+      expect{full_card.touch_out(exit_station)}.to change{full_card.entry_station}.to be(nil)
     end
     context 'when card is fully topped up' do
       it 'can change the status of in journey' do
         full_card.touch_in(entry_station)
-        expect{full_card.touch_out}.to change{full_card.in_journey?}.to be(false)
+        expect{full_card.touch_out(exit_station)}.to change{full_card.in_journey?}.to be(false)
       end
       it 'reduces the balance by minimum fare' do
         full_card.touch_in(entry_station)
-        expect{full_card.touch_out}.to change{full_card.balance}.by(-minimum_fare)
+        expect{full_card.touch_out(exit_station)}.to change{full_card.balance}.by(-minimum_fare)
       end
 
     end
@@ -73,6 +75,24 @@ describe Oystercard do
 
     it { is_expected.to respond_to(:touch_in).with(1).argument }
 
+  end
+
+  describe 'journey_history' do
+    it 'should default as empty' do
+      expect(subject.history).to be_empty
+    end
+    it 'stores previous entry station history' do
+      full_card.touch_in(entry_station)
+      full_card.touch_out(exit_station)
+      expect(full_card.history).to eq(journey)
+    end
+    it 'can store multiple journeys' do
+      full_card.touch_in(entry_station)
+      full_card.touch_out(exit_station)
+      full_card.touch_in("archway")
+      full_card.touch_out("brixton")
+      expect(full_card.history).to eq({entry_station => exit_station, "archway" => "brixton"})
+    end
   end
 
 end
