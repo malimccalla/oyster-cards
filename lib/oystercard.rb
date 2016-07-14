@@ -1,46 +1,67 @@
-class Oystercard
+require_relative 'journey'
 
+class Oystercard
 MAXIMUM_BALANCE = 90
 MINIMUM_FARE = 1
-attr_reader :balance, :entry_station, :exit_station, :journeys
+
+attr_reader :balance, :log
 
   def initialize
     @balance = 0
-    @entry_station = nil
-    @journeys = []
+    @journey = Journey.new
+    @log = []
   end
 
   def top_up(amount)
-    fail "Unable to top up: £#{MAXIMUM_BALANCE} limit exceeded" if @balance + amount > MAXIMUM_BALANCE
+    fail max_balance_error if maxed_out(amount)
     @balance += amount
   end
 
   def touch_in(entry_station)
-    fail "Please top up your oystercard" if @balance < MINIMUM_FARE
-    @entry_station = entry_station
-    @journeys << {entry_station: entry_station}
+    fail min_balance_error if not_enough_money
+    if @journey.in_progress?
+      deduct(@journey.fare)
+      log_journey
+    end
+    @journey.start(entry_station)
+
   end
 
   def in_journey?
-    !!entry_station
+    @journey.in_progress?
   end
 
   def touch_out(exit_station)
-    deduct(MINIMUM_FARE)
-    @exit_station = exit_station
-    store_journey
+    @journey.finish(exit_station)
+    deduct(@journey.fare)
+    log_journey
   end
 
   private
+
+  def max_balance_error
+    "Unable to top up: £#{MAXIMUM_BALANCE} limit exceeded"
+  end
+
+  def maxed_out(amount)
+    @balance + amount > MAXIMUM_BALANCE
+  end
+
+  def min_balance_error
+    "Please top up your oystercard"
+  end
+
+  def not_enough_money
+    @balance < MINIMUM_FARE
+  end
 
   def deduct(amount)
     @balance -= amount
   end
 
-  def store_journey
-    @journeys.last.store(:exit_station, exit_station)
-    @entry_station = nil
-    @exit_station = nil
+  def log_journey
+    @log << @journey
+    @journey = Journey.new
   end
 
 end

@@ -7,23 +7,23 @@ describe Oystercard do
   let(:entry_station) { double(:entry_station) }
   let(:exit_station) { double(:exit_station) }
   let(:full_card) { described_class.new}
-  let(:journey) {{entry_station => exit_station}}
   before(:example) { full_card.top_up(maximum_balance) }
+  let(:journey) {double(:journey)}
 
-  describe 'initialize' do
+  describe '#initialize' do
 
     it 'is initially not in a journey' do
       expect(subject).not_to be_in_journey
     end
   end
 
-  describe "balance" do
+  describe "#balance" do
     it "is expected to return a float" do
       expect(subject.balance).to eq(0)
     end
   end
 
-  describe "top_up" do
+  describe "#top_up" do
     it "is expected to top up the oystercard by a specified amount" do
       expect{subject.top_up(minimum_fare)}.to change{ subject.balance }.by(minimum_fare)
     end
@@ -34,7 +34,7 @@ describe Oystercard do
     end
   end
 
-  describe 'in_journey?' do
+  describe '#in_journey?' do
     context 'when card is fully topped up' do
       it 'reports whether card is in journey' do
         full_card.touch_in(entry_station)
@@ -43,11 +43,8 @@ describe Oystercard do
     end
   end
 
-  describe 'touch_out' do
-    it 'forgets entry station' do
-      full_card.touch_in(entry_station)
-      expect{full_card.touch_out(exit_station)}.to change{full_card.entry_station}.to be(nil)
-    end
+  describe '#touch_out' do
+
     context 'when card is fully topped up' do
       it 'can change the status of in journey' do
         full_card.touch_in(entry_station)
@@ -61,13 +58,9 @@ describe Oystercard do
     end
   end
 
-  describe 'touch_in' do
+  describe '#touch_in' do
     it 'can change the status of in journey' do
       expect{full_card.touch_in(entry_station)}.to change{full_card.in_journey?}.to be(true)
-    end
-    it 'allows the card to remember the entry station' do
-      full_card.touch_in(entry_station)
-      expect(full_card.entry_station).to eq(entry_station)
     end
     it 'raises an error when balance is below minimum fare' do
       expect{subject.touch_in(entry_station)}.to raise_error "Please top up your oystercard"
@@ -77,21 +70,20 @@ describe Oystercard do
 
   end
 
-  describe 'journey_history' do
+
+  describe '#log' do
     it 'should default as empty' do
-      expect(subject.journeys).to be_empty
+      expect(subject.log).to be_empty
     end
     it 'stores previous entry station history' do
       full_card.touch_in(entry_station)
-      full_card.touch_out(exit_station)
-      expect(full_card.journeys).to eq([{entry_station: entry_station, exit_station: exit_station}])
     end
     it 'can store multiple journeys' do
       full_card.touch_in(entry_station)
-      full_card.touch_out(exit_station)
-      full_card.touch_in("archway")
-      full_card.touch_out("brixton")
-      expect(full_card.journeys).to eq([{entry_station: entry_station, exit_station: exit_station}, {entry_station: "archway", exit_station: "brixton"}])
+      expect{full_card.touch_out(exit_station)}.to change{full_card.log.length}.by(1)
+      full_card.touch_in(entry_station)
+      expect{full_card.touch_out(exit_station)}.to change{full_card.log.length}.by(1)
+      expect(full_card.log.length).to eq 2
     end
   end
 
