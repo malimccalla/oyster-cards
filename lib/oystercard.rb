@@ -1,4 +1,5 @@
 require_relative 'journey_log'
+require_relative 'station'
 
 class Oystercard
 MAXIMUM_BALANCE = 90
@@ -21,15 +22,14 @@ attr_reader :balance, :log
     deduct(@log.touch_in_charge)
     @log.start(entry_station)
   end
-  #
-  # def in_journey?
-  #   @journey.in_progress?
-  # end
 
   def touch_out(exit_station)
     @log.finish(exit_station)
     deduct(@log.charge)
-    @log.log_journey
+  end
+
+  def history
+    @log.journeys
   end
 
   private

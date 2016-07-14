@@ -16,24 +16,24 @@ class JourneyLog
     @current_journey.finish(exit_station)
   end
 
-  def log_journey
-    @log << @current_journey
-    @current_journey = @journey_class.new
-  end
-
   def journeys
     @journeys.dup
   end
 
   def charge
-    fare
+    amount = @current_journey.fare
+    log_journey
+    amount
   end
 
   def touch_in_charge
-    if @current_journey.in_progress?
-      log_journey
-      charge
-    end
+    @current_journey.in_progress? ? charge : 0
   end
 
+private
+
+  def log_journey
+    @log << @current_journey
+    @current_journey = @journey_class.new
+  end
 end
