@@ -16,8 +16,11 @@ attr_reader :entry_station, :exit_station
     !!@entry_station
   end
 
+  def complete?
+    !!@entry_station && !!@exit_station
+  end
   def fare
-    !!@entry_station && !!@exit_station ? calculate_fare : PENALTY_FARE
+    complete? ? calculate_fare : PENALTY_FARE
   end
 
 private
@@ -27,7 +30,7 @@ def calculate_fare
 end
 
 def fare_multipler
-  (@entry_station.zone - @exit_station.zone).abs
+  MIN_FARE + (@entry_station.zone - @exit_station.zone).abs
 end
 
 end

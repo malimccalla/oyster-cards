@@ -1,8 +1,8 @@
 require 'journey'
 
 describe Journey do
-  let(:entry_station) {double(:station)}
-  let(:exit_station) {double(:station)}
+  let(:entry_station) {double(:station, zone: 1)}
+  let(:exit_station) {double(:station, zone: 1)}
 
   describe '#start' do
     it 'assigns an entry staton' do
@@ -44,8 +44,46 @@ describe Journey do
         subject.finish(exit_station)
         expect(subject.fare).to be 6
       end
-
     end
   end
+
+  context 'given an exit station' do
+    let(:station) { double :station }
+    let(:other_station) { double :other_station }
+
+  before do
+    subject.start(station)
+    subject.finish(other_station)
+  end
+
+  it 'calculates a fare for zone 1 to zone 1' do
+    update_zones(1,1)
+    expect(subject.fare).to eq 1
+  end
+
+  it 'calculates a fare for zone 1 to zone 2' do
+    update_zones(1,2)
+    expect(subject.fare).to eq 2
+  end
+
+  it 'calculates a fare for zone 6 to zone 5' do
+    update_zones(6,5)
+    expect(subject.fare).to eq 2
+  end
+
+  it 'calculates a fare for zone 6 to zone 1' do
+    update_zones(6,2)
+    expect(subject.fare).to eq 5
+  end
+
+  it "knows if a journey is complete" do
+    expect(subject).to be_complete
+  end
+
+  def update_zones(entry_zone, exit_zone)
+    allow(station).to receive(:zone).and_return(entry_zone)
+    allow(other_station).to receive(:zone).and_return(exit_zone)
+  end
+end
 
 end
