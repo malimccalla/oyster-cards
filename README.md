@@ -1,7 +1,6 @@
-<<<<<<< HEAD
 #Oyster cards
 =======
-#oystercard
+
 
 User Stories:
 ```
@@ -53,8 +52,3 @@ In order to be charged the correct amount
 As a customer
 I need to have the correct fare calculated
 ```
-Issues:
-
-Challenge 3. Ruby NameError - uninitialized constant oystercard
-/Users/rylangooch/Documents/Coding/MakersAcademy/oystercard/spec/oystercard_spec.rb:1
->>>>>>> day-4
