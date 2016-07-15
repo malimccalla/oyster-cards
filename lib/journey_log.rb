@@ -16,8 +16,8 @@ class JourneyLog
     @current_journey.finish(exit_station)
   end
 
-  def journeys
-    @journeys.dup
+  def log
+    @log.dup
   end
 
   def charge
